@@ -7,6 +7,15 @@ use Illuminate\View\Component;
 
 class AdminLayout extends Component
 {
+    public $page = "";
+    public $desc = "";
+
+    public function __construct($page, $desc)
+    {
+        $this->page = $page;
+        $this->desc = $desc;
+    }
+
     public function render()
     {
         $adminMovieGenres = Cache::remember('genres_movies', now()->addMonths(6), function () {
