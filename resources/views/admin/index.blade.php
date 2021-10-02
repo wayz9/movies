@@ -7,7 +7,7 @@
             @foreach ($movies as $movie)
             <div class="flex flex-col bg-white ring ring-inset ring-gray-100 rounded-xl overflow-hidden">
                 <div class="relative">
-                    <img src="{{ $movie['poster'] }}" alt="{{ $movie['title'] }}">
+                    <img src="{{ $movie['poster'] }}" alt="{{ $movie['title'] }}" class="object-center object-cover">
                     <x-rating rating="{{ $movie['vote_average'] }}"/>
                 </div>
                 <div class="py-3 px-4 text-sm">
@@ -34,7 +34,7 @@
             @foreach ($trending as $movie)
             <div class="flex flex-col bg-white ring ring-inset ring-gray-100 rounded-xl overflow-hidden">
                 <div class="relative">
-                    <img src="{{ $movie['poster'] }}" alt="{{ $movie['title'] }}">
+                    <img src="{{ $movie['poster'] }}" alt="{{ $movie['title'] }}" class="object-center object-cover">
                     <x-rating rating="{{ $movie['vote_average'] }}"/>
                 </div>
                 <div class="py-3 px-4 text-sm">
@@ -53,7 +53,7 @@
             @foreach ($actors as $actor)
             <div class="flex flex-col bg-white ring ring-inset ring-gray-100 rounded-xl overflow-hidden">
                 <div class="relative">
-                    <img src="{{ $actor['picture'] }}" alt="{{ $actor['name'] }}">
+                    <img src="{{ $actor['picture'] }}" alt="{{ $actor['name'] }}" class="object-center object-cover">
                 </div>
                 <div class="py-3 px-4 text-sm">
                     <a href="{{ route('actor.show', ['id' => $actor['id']]) }}" class="font-semibold text-gray-900 hover:text-cyan-600 line-clamp-1">{{ $actor['name'] }}</a>
