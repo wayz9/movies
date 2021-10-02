@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Facades\Format;
 use Illuminate\Http\Request;
 
 class ActorController extends Controller
 {
-    public function index()
+    public function index($page = 1)
     {
-        $actors = tmdb("/person/popular")->take(15);
+        abort_if($page > 500, 204);
+
+        $actors = Format::actor(tmdb("/person/popular")->take(15));
 
         return view('actor.index', compact('actors'));
     }

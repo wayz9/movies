@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 
 class Formater
@@ -13,6 +15,7 @@ class Formater
             ->sortByDesc('vote_average')
             ->map(function($item) {
                 return collect($item)->merge([
+                    'title' => $item['title'] ?? $item['name'],
                     'release_date' => $this->date($item['release_date'] ?? $item['first_air_date']),
                     'vote_average' => $this->roundAndCalc($item['vote_average']),
                     'poster' => $this->image($item['poster_path']),
@@ -29,14 +32,87 @@ class Formater
                 return collect($actor)->merge([
                     'gender' => $this->gender($actor['gender']),
                     'picture' => $this->image($actor['profile_path']),
-                    'known_for' => $this->flatAndImplode($actor['known_for'])
+                    'known_for' => $this->flatAndImplode($actor['known_for']),
                 ]);
             });
     }
 
+    public function media(Collection $item): Collection
+    {
+        return $item->merge([
+            'title' => $item['title'] ?? $item['name'],
+            'background' => $this->image($item['backdrop_path'], 'original'),
+            'poster' => $this->image($item['poster_path']),
+            'release_date' => $this->date($item['release_date'] ?? $item['first_air_date']),
+            'budget' => $this->money($item['budget']),
+            'revenue' => $this->money($item['revenue']),
+            'genre' => $this->getGenres($item['genres']),
+            'languages' => $this->flatAndImplode($item['spoken_languages']),
+            'keywords' => collect($item['keywords']['keywords'])->take(5),
+            'cast' => $this->getCredits($item['credits']['cast']),
+            'crew' => collect($item['credits']['crew'])->take(4),
+            'runtime' => $this->convertRuntime($item['runtime']),
+            'reviews' => $this->getReviews(collect($item['reviews']['results'])->take(4))
+        ])->except('credits');
+    }
+
+    public function getCredits(array $arr): Collection
+    {
+        return collect($arr)
+            ->sortByDesc('popularity')
+            ->map(function($person) {
+                return collect($person)->merge([
+                    'picture' => $this->image($person['profile_path']),
+                ]);
+            })->take(4);
+
+            // *Replace take(4) with more when slider arrives!
+    }
+
+    public function money(int $value): string
+    {
+        if(!is_int($value)){
+            return '—';
+        }
+
+        return '$' . number_format($value, 2);
+    }
+
+    public function convertRuntime(int $minutes)
+    {
+        return Str::runtime($minutes);
+    }
+
+    public function getGenres(array $arr): string
+    {
+        if(empty($arr)){
+            return 'No genre found!';
+        }
+
+        return collect($arr)->pluck('name')->implode(', ');
+    }
+
+    public function getReviews(Collection $reviews)
+    {
+        return $reviews->map(function($review){
+            return collect($review)->merge([
+                'created_at' => $this->date($review['created_at']),
+                'updated_at' => $this->date($review['created_at']),
+                'author_details' => [
+                    'name' => $review['author_details']['name'] ?? $review['author_details']['username'],
+                    'avatar' => $this->image($review['author_details']['avatar_path']),
+                ],
+            ]);
+        });
+    }
+
     public function flatAndImplode(array $arr): string
     {
-        return collect($arr)->pluck('title')->implode(', ');
+        return collect($arr)->map(function($item){
+            return [
+                'title' => (Arr::has($item, 'title')) ? $item['title'] : $item['name']
+            ];
+        })->pluck('title')->implode(', ');
     }
 
     public function gender(int $gender): string
@@ -56,13 +132,21 @@ class Formater
         }
     }
 
-    public function image($file): string
+    public function image($path, $quality = 'w780'): string
     {
-        return "https://image.tmdb.org/t/p/w780{$file}";
+        if(!$path){
+            return asset('placeholder/404.png');
+        }
+
+        return "https://image.tmdb.org/t/p/{$quality}{$path}";
     }
 
     public function date($date): Carbon
     {
+        if(!$date){
+            return now();
+        }
+
         return Carbon::parse($date);
     }
 

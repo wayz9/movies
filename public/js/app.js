@@ -3327,7 +3327,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-window.InfScroll = (infinite_scroll__WEBPACK_IMPORTED_MODULE_1___default());
+window.InfiniteScroll = (infinite_scroll__WEBPACK_IMPORTED_MODULE_1___default());
 window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"];
 alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].plugin(_alpinejs_collapse__WEBPACK_IMPORTED_MODULE_2__["default"]);
 alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].start();
