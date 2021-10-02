@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use App\Services\Facades\Format;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        /* $movies = tmdb('movie/popular')->take(12);
+        $movies = Format::format(tmdb('movie/popular')->take(5));
 
         (request('time_window') == 'week')
-            ? $trending = tmdb('trending/movie/week')->take(12)
-            : $trending = tmdb('trending/movie/day')->take(12);
+            ? $trending = Format::format(tmdb('trending/movie/week')->take(5))
+            : $trending = Format::format(tmdb('trending/movie/day')->take(5));
 
-        $actors = tmdb('trending/person/week')->take(12); */
+        $actors = Format::actor(tmdb('trending/person/week')->take(5));
 
-        return view('admin.index', /* compact('movies', 'trending', 'actors') */);
+        return view('admin.index', compact('movies', 'trending', 'actors'));
     }
 }

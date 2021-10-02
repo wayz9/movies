@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
-use App\Services\FormatService;
+use App\Services\Formater;
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+class FormatServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Register services.
      *
      * @return void
      */
@@ -18,12 +18,14 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Bootstrap services.
      *
      * @return void
      */
     public function boot()
     {
-
+        $this->app->bind('format',function(){
+            return new Formater();
+        });
     }
 }
