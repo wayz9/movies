@@ -44,15 +44,16 @@ class Formater
             'background' => $this->image($item['backdrop_path'], 'original'),
             'poster' => $this->image($item['poster_path']),
             'release_date' => $this->date($item['release_date'] ?? $item['first_air_date']),
-            'budget' => $this->money($item['budget']),
-            'revenue' => $this->money($item['revenue']),
+            'budget' => $this->money($item['budget'] ?? NULL),
+            'revenue' => $this->money($item['revenue'] ?? NULL),
             'genre' => $this->getGenres($item['genres']),
             'languages' => $this->flatAndImplode($item['spoken_languages']),
-            'keywords' => collect($item['keywords']['keywords'])->take(5),
+            'keywords' => collect(isset($item['keywords']['keywords']))->take(5),
             'cast' => $this->getCredits($item['credits']['cast']),
             'crew' => collect($item['credits']['crew'])->take(4),
-            'runtime' => $this->convertRuntime($item['runtime']),
-            'reviews' => $this->getReviews(collect($item['reviews']['results'])->take(4))
+            'runtime' => $this->convertRuntime(isset($item['runtime'])),
+            'videos' => $this->video($item['videos']['results']),
+            'reviews' => $this->getReviews(collect($item['reviews']['results'])->take(1))
         ])->except('credits');
     }
 
@@ -69,7 +70,7 @@ class Formater
             // *Replace take(4) with more when slider arrives!
     }
 
-    public function money(int $value): string
+    public function money(int|null $value): string
     {
         if(!is_int($value)){
             return '—';
@@ -78,7 +79,7 @@ class Formater
         return '$' . number_format($value, 2);
     }
 
-    public function convertRuntime(int $minutes)
+    public function convertRuntime(int|null $minutes): string
     {
         return Str::runtime($minutes);
     }
@@ -92,16 +93,27 @@ class Formater
         return collect($arr)->pluck('name')->implode(', ');
     }
 
-    public function getReviews(Collection $reviews)
+    public function getReviews(Collection $reviews): Collection
     {
         return $reviews->map(function($review){
             return collect($review)->merge([
                 'created_at' => $this->date($review['created_at']),
                 'updated_at' => $this->date($review['created_at']),
                 'author_details' => [
-                    'name' => $review['author_details']['name'] ?? $review['author_details']['username'],
+                    'name' => $review['author_details']['name'],
+                    'username' => $review['author_details']['username'],
                     'avatar' => $this->image($review['author_details']['avatar_path']),
+                    'rating' => number_format($review['author_details']['rating'])
                 ],
+            ]);
+        });
+    }
+
+    public function video(array $videos): Collection
+    {
+        return collect($videos)->where('site', 'YouTube')->map(function($video){
+            return collect($video)->merge([
+                'url' => "https://www.youtube.com/embed/{$video['key']}",
             ]);
         });
     }
@@ -134,6 +146,10 @@ class Formater
 
     public function image($path, $quality = 'w780'): string
     {
+        if(Str::contains($path, 'gravatar')){
+            return Str::substr($path, 1);
+        }
+
         if(!$path){
             return asset('placeholder/404.png');
         }
@@ -141,7 +157,7 @@ class Formater
         return "https://image.tmdb.org/t/p/{$quality}{$path}";
     }
 
-    public function date($date): Carbon
+    public function date(string $date): Carbon
     {
         if(!$date){
             return now();
