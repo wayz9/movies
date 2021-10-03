@@ -18,7 +18,7 @@ class TvShowController extends Controller
 
     public function show($id): View
     {
-        $tvshow = response_tmdb("tv/{$id}?append_to_response=videos,credits");
+        $tvshow = Format::media(response_tmdb("tv/{$id}?append_to_response=videos,credits,reviews,keywords"));
 
         return view('tvshow.show', compact('tvshow'));
     }
