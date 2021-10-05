@@ -14,7 +14,7 @@ class AdminController extends Controller
             ? $trending = Format::format(tmdb('trending/movie/week')->take(5))
             : $trending = Format::format(tmdb('trending/movie/day')->take(5));
 
-        $actors = Format::actor(tmdb('trending/person/week')->take(5));
+        $actors = Format::actors(tmdb('trending/person/week')->take(5));
 
         return view('admin.index', compact('movies', 'trending', 'actors'));
     }

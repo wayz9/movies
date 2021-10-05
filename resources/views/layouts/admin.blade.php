@@ -269,13 +269,129 @@
                                     </svg>
                                 </span>
                             </button>
-                            <div class="relative inline-flex">
-                                <button type="button" class="w-10 h-10 rounded-xl focus:outline-none">
+                            <div x-data="{open : false}" class="relative inline-flex">
+                                <button @click="open = !open" type="button" class="w-10 h-10 rounded-xl focus:outline-none">
                                     <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                                         alt="Profile Picture" class="rounded-xl">
                                 </button>
                                 <span
                                     class="block absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 rounded-full ring-1 ring-inset ring-green-600 bg-green-500"></span>
+                                <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                    x-transition:enter-end="transform opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="transform opacity-100 scale-100"
+                                    x-transition:leave-end="transform opacity-0 scale-95" @click.away="open = false"
+                                    @keydown.escape.window="open = false"
+                                    class="origin-top-right z-50 absolute right-0 mt-12 w-[15.25rem] rounded-xl bg-white shadow-md"
+                                    tabindex="-1">
+                                    <div class="pt-4 px-5 text-sm">
+                                        <div class="text-gray-600">Signed in as</div>
+                                        <div class="font-medium text-dark-700">{{ auth()->user()->email }}</div>
+                                    </div>
+                                    <ul class="py-3 flex flex-col">
+                                        <li>
+                                            <a href="#"
+                                                class="py-2 px-4 flex items-center gap-2.5 text-gray-600 bg-transparent hover:bg-gray-100/50 focus:outline-none focus:bg-gray-100/50">
+                                                <span class="inline-flex">
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="1.5"
+                                                            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                                <span class="text-sm font-medium">Profile</span>
+                                            </a>
+                                        </li>
+                                        <li class="py-2 px-4 flex items-center justify-between cursor-pointer">
+                                            <label for="theme"
+                                                class="flex items-center gap-2.5 text-gray-600 cursor-pointer">
+                                                <span class="inline-flex">
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="1.5"
+                                                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                                <span class="text-sm font-medium">Dark Theme</span>
+                                            </label>
+                                            <label for="theme" x-data="{theme : $persist(false)}"
+                                                class="flex items-center cursor-pointer">
+                                                <div class="relative">
+                                                    <input type="checkbox" id="theme" x-model="theme"
+                                                        class="sr-only peer">
+                                                    <div
+                                                        class="h-3.5 w-9 bg-gray-200 peer-checked:bg-cyan-100 rounded-full">
+                                                    </div>
+                                                    <div
+                                                        class="absolute -left-px bottom-[-3px] w-5 h-5 rounded-full shadow-none bg-gray-500 peer-checked:bg-cyan-500 peer-checked:translate-x-[18px] peer-checked:shadow-cyan-md transition">
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                                class="py-2 px-4 flex items-center gap-2.5 text-gray-600 bg-transparent hover:bg-gray-100/50 focus:outline-none focus:bg-gray-100/50">
+                                                <span class="inline-flex">
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="1.5"
+                                                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                                        </path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                                <span class="text-sm font-medium">Account Settings</span>
+                                            </a>
+                                        </li>
+                                        <li class="inline-block">
+                                            <div
+                                                class="flex items-center justify-between py-2 px-4 bg-transparent hover:bg-gray-100/50 focus:bg-gray-100/50 cursor-pointer">
+                                                <div class="flex items-center gap-2.5 text-gray-600">
+                                                    <span class="inline-flex">
+                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="1.5"
+                                                                d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z">
+                                                            </path>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="text-sm font-medium">Change Status</span>
+                                                </div>
+                                                <div class="inline-flex text-gray-600">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="1.5" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                                class="py-2 px-4 flex items-center gap-2.5 text-gray-600 bg-transparent hover:bg-gray-100/50 focus:outline-none focus:bg-gray-100/50">
+                                                <span class="inline-flex">
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="1.5"
+                                                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                                <span class="text-sm font-medium">Sign Out</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

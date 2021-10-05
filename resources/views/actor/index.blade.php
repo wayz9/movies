@@ -1,7 +1,7 @@
 <x-admin-layout page="Actors" desc="Shows all popular actors">
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8 lg:gap-6">
+    <div class="actors grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8 lg:gap-6">
         @foreach ($actors as $actor)
-        <div class="flex flex-col bg-white ring ring-inset ring-gray-100 rounded-xl overflow-hidden">
+        <div class="actor flex flex-col bg-white ring ring-inset ring-gray-100 rounded-xl overflow-hidden">
             <div class="relative">
                 <img src="{{ $actor['picture'] }}" alt="{{ $actor['name'] }}">
             </div>
@@ -12,4 +12,17 @@
         </div>
         @endforeach
     </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            var elem = document.querySelector('.actors');
+
+            var infScroll = new InfiniteScroll( elem, {
+                prefill: true,
+                path: "/actors/@{{#}}",
+                append: '.actor',
+                history: false,
+            });
+        })
+    </script>
 </x-admin-layout>
