@@ -11,18 +11,15 @@ class ActorController extends Controller
     {
         abort_if($page > 500, 204);
 
-        $actors = Format::actor(tmdb("/person/popular")->take(15));
+        $actors = Format::actors(tmdb("/person/popular?page={$page}")->take(15));
 
         return view('actor.index', compact('actors'));
     }
 
     public function show($id)
     {
-        $credits = response_tmdb("person/{$id}/combined_credits");
-        $actor = response_tmdb("person/{$id}");
-
-        dd($credits, $actor);
-
-        return view('actor.show');
+        $cast = Format::format(collect(response_tmdb("person/{$id}/combined_credits")['cast']))->values();
+        $actor = Format::person(response_tmdb("person/{$id}"));
+        return view('actor.show', compact('actor', 'cast'));
     }
 }

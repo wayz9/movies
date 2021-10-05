@@ -41,6 +41,9 @@ module.exports = {
             },
             boxShadow: {
                 'cyan-md': 'box-shadow: 0px 0px 4px 2.5px rgba(103, 232, 249, 0.15);'
+            },
+            lineClamp: {
+                15: '15',
             }
         },
     },

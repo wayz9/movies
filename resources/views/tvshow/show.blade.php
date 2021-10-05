@@ -21,7 +21,7 @@
                         <h4 class="mb-1 text-sm font-medium text-gray-900 md:text-gray-100">Overview</h4>
                         <p class="max-w-lg line-clamp-2 text-gray-600 md:text-gray-400">{{ $tvshow['overview'] }}</p>
                     </div>
-                    <div class="mb-5 2xl:mb-6 flex items-center gap-12 flex-wrap">
+                    <div class="mb-5 2xl:mb-6 flex items-center gap-y-4 gap-x-12 flex-wrap">
                         <div class="flex items-center gap-1.5 text-gray-800 md:text-gray-100">
                             <span class="inline-flex">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -177,8 +177,8 @@
     <div class="mb-8 md:mb-11 xl:mb-14 2xl:px-9 grid lg:grid-cols-4 gap-8 lg:gap-6">
         <div class="col-span-3">
             <h2 class="mb-3 text-base lg:text-xl font-semibold text-gray-900">Reviews</h2>
-            @foreach ($tvshow['reviews'] as $review)
-            <div class="pt-4 pb-8 px-5 flex items-start gap-3 bg-white">
+            @forelse ($tvshow['reviews'] as $review)
+            <div class="pt-4 pb-8 px-5 flex items-start gap-3 bg-white rounded-xl ring-1 ring-inset ring-gray-100">
                 <div class="flex-shrink-0 mt-0.5">
                     <img src="{{ $review['author_details']['avatar'] }}" alt="User" class="w-10 h-10 rounded-full">
                 </div>
@@ -202,11 +202,13 @@
                     </div>
                     <p class="mb-4 text-sm text-gray-600">Written by {{ $review['author'] }} on
                         {{ $review['created_at']->format('F d, Y') }}</p>
-                    <p class="text-sm text-gray-700 whitespace-pre-line line-clamp-4 md:line-clamp-none">
+                    <p class="text-sm text-gray-700 whitespace-pre-line line-clamp-4 md:line-clamp-15">
                         {{ $review['content'] }}</p>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <p class="text-sm text-gray-600 italic">No revies found.</p>
+            @endforelse
         </div>
         <div>
             <h2 class="mb-3 text-base lg:text-xl font-semibold text-gray-900">Social Media</h2>
@@ -239,14 +241,16 @@
     <div class="mb-8 md:mb-11 xl:mb-14 2xl:px-9 grid lg:grid-cols-4 gap-8 lg:gap-6">
         <div class="col-span-3">
             <h2 class="mb-3 text-base lg:text-xl font-semibold text-gray-900">Trailer</h2>
-            @foreach ($tvshow['videos']->take(1) as $video)
+            @forelse ($tvshow['videos']->take(1) as $video)
             <div class="relative w-full overflow-hidden pt-[56.25%] rounded-xl">
                 <iframe class="w-full absolute inset-0 h-full border-none" src="{{ $video['url'] }}"
                     title="{{ $video['name'] }}" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>
             </div>
-            @endforeach
+            @empty
+            <p class="text-sm text-gray-600 italic">No trailers found.</p>
+            @endforelse
         </div>
     </div>
 

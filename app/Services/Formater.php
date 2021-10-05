@@ -16,15 +16,16 @@ class Formater
             ->map(function($item) {
                 return collect($item)->merge([
                     'title' => $item['title'] ?? $item['name'],
-                    'release_date' => $this->date($item['release_date'] ?? $item['first_air_date']),
+                    'release_date' => $this->date($item['release_date'] ?? $item['first_air_date'] ?? ''),
                     'vote_average' => $this->roundAndCalc($item['vote_average']),
                     'poster' => $this->image($item['poster_path']),
                     'backdrop' => $this->image($item['backdrop_path']),
+                    'url' => $this->getUrl($item['media_type'] ?? '', $item['id']),
                 ]);
             });
     }
 
-    public function actor(Collection $data): Collection
+    public function actors(Collection $data): Collection
     {
         return $data
             ->sortByDesc('popularity')
@@ -35,6 +36,15 @@ class Formater
                     'known_for' => $this->flatAndImplode($actor['known_for']),
                 ]);
             });
+    }
+
+    public function person(Collection $person): Collection
+    {
+        return $person->merge([
+            'picture' => $this->image($person['profile_path']),
+            'gender' => $this->gender($person['gender']),
+            'birthday' => $this->date($person['birthday']),
+        ]);
     }
 
     public function media(Collection $item): Collection
@@ -48,7 +58,7 @@ class Formater
             'revenue' => $this->money($item['revenue'] ?? NULL),
             'genre' => $this->getGenres($item['genres']),
             'languages' => $this->flatAndImplode($item['spoken_languages']),
-            'keywords' => collect(isset($item['keywords']['keywords']))->take(5),
+            'keywords' => isset($item['keywords']['keywords']) ? collect($item['keywords']['keywords'])->take(5) : '',
             'cast' => $this->getCredits($item['credits']['cast']),
             'crew' => collect($item['credits']['crew'])->take(4),
             'runtime' => $this->convertRuntime(isset($item['runtime'])),
@@ -103,7 +113,7 @@ class Formater
                     'name' => $review['author_details']['name'],
                     'username' => $review['author_details']['username'],
                     'avatar' => $this->image($review['author_details']['avatar_path']),
-                    'rating' => number_format($review['author_details']['rating'])
+                    'rating' => number_format($review['author_details']['rating'], 1)
                 ],
             ]);
         });
@@ -159,7 +169,7 @@ class Formater
 
     public function date(string $date): Carbon
     {
-        if(!$date){
+        if($date == ''){
             return now();
         }
 
@@ -169,5 +179,18 @@ class Formater
     public function roundAndCalc(int $val): int
     {
         return intval(round($val)) * 10;
+    }
+
+    public function getUrl($type, $id)
+    {
+        switch ($type) {
+            case 'movie':
+                return route('movie.show', $id);
+                break;
+
+            default:
+            return route('tv.show', $id);
+                break;
+        }
     }
 }
