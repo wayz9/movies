@@ -176,9 +176,9 @@ class Formater
         return Carbon::parse($date);
     }
 
-    public function roundAndCalc(int $val): int
+    public function roundAndCalc($val): int
     {
-        return intval(round($val)) * 10;
+        return round($val * 10);
     }
 
     public function getUrl($type, $id)

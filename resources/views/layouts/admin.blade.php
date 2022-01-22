@@ -319,7 +319,7 @@
                                                 </span>
                                                 <span class="text-sm font-medium">Dark Theme</span>
                                             </label>
-                                            <label for="theme" x-data="{theme : $persist(false)}"
+                                            <label for="theme" x-data="{theme : 1}"
                                                 class="flex items-center cursor-pointer">
                                                 <div class="relative">
                                                     <input type="checkbox" id="theme" x-model="theme"
