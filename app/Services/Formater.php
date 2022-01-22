@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Gender;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -130,28 +131,12 @@ class Formater
 
     public function flatAndImplode(array $arr): string
     {
-        return collect($arr)->map(function($item){
-            return [
-                'title' => (Arr::has($item, 'title')) ? $item['title'] : $item['name']
-            ];
-        })->pluck('title')->implode(', ');
+        return collect($arr)->map(fn($item) => ['title' => (Arr::has($item, 'title')) ? $item['title'] : $item['name']])->pluck('title')->implode(', ');
     }
 
-    public function gender(int $gender): string
+    public function gender($gender): string
     {
-        switch ($gender) {
-            case 1:
-                return 'Female';
-                break;
-
-            case 2:
-                return 'Male';
-                break;
-
-            default:
-                return 'Not Specified';
-                break;
-        }
+        return Gender::tryFrom($gender)?->name ?: 'Not Specified';
     }
 
     public function image($path, $quality = 'w780'): string
@@ -183,14 +168,13 @@ class Formater
 
     public function getUrl($type, $id)
     {
-        switch ($type) {
-            case 'movie':
-                return route('movie.show', $id);
-                break;
-
-            default:
-            return route('tv.show', $id);
-                break;
+        try {
+            return match($type) {
+                'movie' => route('movie.show', $id),
+                'tv' => route('tv.show', $id),
+            };
+        } catch (\UnhandledMatchError $e) {
+            return route('dashboard');
         }
     }
 }
