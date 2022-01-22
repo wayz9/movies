@@ -61,7 +61,7 @@ class Formater
             'keywords' => isset($item['keywords']['keywords']) ? collect($item['keywords']['keywords'])->take(5) : '',
             'cast' => $this->getCredits($item['credits']['cast']),
             'crew' => collect($item['credits']['crew'])->take(4),
-            'runtime' => $this->convertRuntime(isset($item['runtime'])),
+            'runtime' => $this->convertRuntime($item['runtime']),
             'videos' => $this->video($item['videos']['results']),
             'reviews' => $this->getReviews(collect($item['reviews']['results'])->take(1))
         ])->except('credits');
